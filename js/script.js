@@ -3,33 +3,35 @@
 document.addEventListener('DOMContentLoaded', () => {
     const fileInput = document.getElementById('jpg-to-pdf-input');
     const convertBtn = document.getElementById('jpg-to-pdf-convert');
+    const clearBtn = document.getElementById('jpg-to-pdf-clear');
     const resultContainer = document.getElementById('jpg-to-pdf-result');
     const resultName = document.getElementById('jpg-to-pdf-result-name');
     const downloadBtn = document.getElementById('jpg-to-pdf-download');
+    const fileInfo = document.getElementById('jpg-to-pdf-info');
+    const dropArea = document.getElementById('jpg-to-pdf-drop');
+    const pagesPerSheetSelect = document.getElementById('pages-per-sheet');
+    const orientationSelect = document.getElementById('pdf-orientation');
     let files = [];
 
     // Handle file selection
     fileInput.addEventListener('change', (event) => {
         files = Array.from(event.target.files);
-        if (files.length > 0) {
-            document.getElementById('jpg-to-pdf-info').innerText = `${files.length} file(s) selected`;
-        }
+        fileInfo.innerText = `${files.length} file(s) selected`;
     });
 
     // Handle drag and drop
-    const dropArea = document.getElementById('jpg-to-pdf-drop');
     dropArea.addEventListener('dragover', (event) => {
         event.preventDefault();
         dropArea.classList.add('active');
     });
+
     dropArea.addEventListener('dragleave', () => dropArea.classList.remove('active'));
+
     dropArea.addEventListener('drop', (event) => {
         event.preventDefault();
         dropArea.classList.remove('active');
         files = Array.from(event.dataTransfer.files).filter(file => file.type.startsWith('image/'));
-        if (files.length > 0) {
-            document.getElementById('jpg-to-pdf-info').innerText = `${files.length} file(s) selected`;
-        }
+        fileInfo.innerText = `${files.length} file(s) selected`;
     });
 
     // Convert to PDF
@@ -40,15 +42,64 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF();
+        const orientation = orientationSelect.value;
+        const pdf = new jsPDF({
+            orientation: orientation, // Use the selected orientation
+            unit: 'mm',
+            format: 'a4',
+        });
 
-        for (let i = 0; i < files.length; i++) {
-            const img = await loadImage(files[i]);
-            const imgWidth = pdf.internal.pageSize.getWidth();
-            const imgHeight = (img.height * imgWidth) / img.width;
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
 
-            if (i > 0) pdf.addPage();
-            pdf.addImage(img, 'JPEG', 0, 0, imgWidth, imgHeight);
+        const pagesPerSheet = parseInt(pagesPerSheetSelect.value);
+        
+        // Define rows and columns based on orientation and pages per sheet
+        let rows, cols;
+
+        if (pagesPerSheet === 1) {
+            rows = cols = 1;
+        } else if (pagesPerSheet === 2) {
+            if (orientation === 'portrait') {
+                rows = 2;
+                cols = 1;
+            } else {
+                rows = 1;
+                cols = 2;
+            }
+        } else if (pagesPerSheet === 4) {
+            rows = 2;
+            cols = 2;
+        }
+
+        const cellWidth = pageWidth / cols;
+        const cellHeight = pageHeight / rows;
+
+        let imgIndex = 0;
+
+        while (imgIndex < files.length) {
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    if (imgIndex >= files.length) break;
+
+                    const img = await loadImage(files[imgIndex]);
+                    let imgWidth = img.width;
+                    let imgHeight = img.height;
+
+                    // Scale to fit within the cell while maintaining aspect ratio
+                    const scaleFactor = Math.min(cellWidth / imgWidth, cellHeight / imgHeight);
+                    let finalWidth = imgWidth * scaleFactor;
+                    let finalHeight = imgHeight * scaleFactor;
+
+                    // Center the image within the cell
+                    const xOffset = col * cellWidth + (cellWidth - finalWidth) / 2;
+                    const yOffset = row * cellHeight + (cellHeight - finalHeight) / 2;
+
+                    pdf.addImage(img, 'JPEG', xOffset, yOffset, finalWidth, finalHeight);
+                    imgIndex++;
+                }
+            }
+            if (imgIndex < files.length) pdf.addPage(); // Add new page if needed
         }
 
         // Set file name
@@ -58,9 +109,16 @@ document.addEventListener('DOMContentLoaded', () => {
         resultContainer.style.display = 'block';
 
         // Download action
-        downloadBtn.onclick = () => {
-            pdf.save(pdfFileName);
-        };
+        downloadBtn.onclick = () => pdf.save(pdfFileName);
+    });
+
+    // Clear Function
+    clearBtn.addEventListener('click', () => {
+        files = [];
+        fileInput.value = '';
+        fileInfo.innerText = '';
+        resultContainer.style.display = 'none';
+        alert('Cleared successfully!');
     });
 
     // Load image file and return promise
@@ -78,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
 
 
 //pdf to image
