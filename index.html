@@ -40,7 +40,7 @@
             <div class="tab-content active" id="jpg-to-pdf">
                 <h2>Convert JPG to PDF</h2>
                 <p>Select one or multiple image files to convert them into a single PDF document.</p>
-                
+
                 <div class="file-drop-area" id="jpg-to-pdf-drop">
                     <span class="icon icon-upload"></span>
                     <h3>Drag & Drop Images Here</h3>
@@ -49,14 +49,35 @@
                     <button class="btn" onclick="document.getElementById('jpg-to-pdf-input').click()">Select Files</button>
                     <div class="file-info" id="jpg-to-pdf-info"></div>
                 </div>
-                
+
                 <div class="input-group">
                     <label for="pdf-filename">PDF Filename</label>
                     <input type="text" id="pdf-filename" placeholder="Enter filename (without extension)" value="converted_document">
                 </div>
-                
+
+                <!-- Pages per sheet dropdown -->
+                <div class="input-group">
+                    <label for="pages-per-sheet">Pages per Sheet</label>
+                    <select id="pages-per-sheet">
+                        <option value="1" selected>1 per page</option>
+                        <option value="2">2 per page</option>
+                        <option value="4">4 per page</option>
+                    </select>
+                </div>
+
+                <!-- Orientation dropdown -->
+                <div class="input-group">
+                    <label for="pdf-orientation">Orientation</label>
+                    <select id="pdf-orientation">
+                        <option value="portrait" selected>Portrait</option>
+                        <option value="landscape">Landscape</option>
+                    </select>
+                </div>
+
+
                 <button class="btn" id="jpg-to-pdf-convert">Convert to PDF</button>
-                
+                <button class="btn" id="jpg-to-pdf-clear">Clear</button>
+
                 <div class="result-container" id="jpg-to-pdf-result">
                     <h3>Conversion Complete</h3>
                     <div class="result-item">
@@ -70,6 +91,7 @@
                     </div>
                 </div>
             </div>
+
             
             <!-- PDF to JPG -->
             <div class="tab-content" id="pdf-to-jpg">
