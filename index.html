@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>enteakshaya DocTools</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.5.141/pdf.min.js"></script>
+
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">enteakshaya DocTools</div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Home</a></li>
+                    <li><a href="https://www.enteakshaya.com" target="_blank">About</a></li>
+                    <li><a href="https://wa.me/+919946280727" target="_blank">Documentation Assistance?</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="tab-container">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="jpg-to-pdf">JPG to PDF</button>
+                <button class="tab-btn" data-tab="pdf-to-jpg">PDF to JPG</button>
+                <button class="tab-btn" data-tab="compress-file">Compress File</button>
+                <button class="tab-btn" data-tab="resize-image">Resize Image</button>
+                <button class="tab-btn" data-tab="passport-photo">Passport Photo</button>
+            </div>
+            
+            <!-- JPG to PDF -->
+            <div class="tab-content active" id="jpg-to-pdf">
+                <h2>Convert JPG to PDF</h2>
+                <p>Select one or multiple image files to convert them into a single PDF document.</p>
+                
+                <div class="file-drop-area" id="jpg-to-pdf-drop">
+                    <span class="icon icon-upload"></span>
+                    <h3>Drag & Drop Images Here</h3>
+                    <p>or</p>
+                    <input type="file" id="jpg-to-pdf-input" multiple accept="image/*" style="display: none;">
+                    <button class="btn" onclick="document.getElementById('jpg-to-pdf-input').click()">Select Files</button>
+                    <div class="file-info" id="jpg-to-pdf-info"></div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="pdf-filename">PDF Filename</label>
+                    <input type="text" id="pdf-filename" placeholder="Enter filename (without extension)" value="converted_document">
+                </div>
+                
+                <button class="btn" id="jpg-to-pdf-convert">Convert to PDF</button>
+                
+                <div class="result-container" id="jpg-to-pdf-result">
+                    <h3>Conversion Complete</h3>
+                    <div class="result-item">
+                        <div class="result-info">
+                            <strong id="jpg-to-pdf-result-name">document.pdf</strong>
+                            <span class="badge badge-success">Completed</span>
+                        </div>
+                        <div class="result-actions">
+                            <button class="btn" id="jpg-to-pdf-download">Download</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PDF to JPG -->
+            <div class="tab-content" id="pdf-to-jpg">
+                <h2>Convert PDF to JPG</h2>
+                <p>Extract pages from a PDF file as JPG images.</p>
+                
+                <div class="file-drop-area" id="pdf-to-jpg-drop">
+                    <span class="icon icon-upload"></span>
+                    <h3>Drag & Drop PDF Here</h3>
+                    <p>or</p>
+                    <input type="file" id="pdf-to-jpg-input" accept=".pdf" style="display: none;">
+                    <button class="btn" onclick="document.getElementById('pdf-to-jpg-input').click()">Select PDF</button>
+                    <div class="file-info" id="pdf-to-jpg-info"></div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="jpg-quality">Image Quality</label>
+                    <input type="range" id="jpg-quality" min="1" max="100" value="80">
+                    <span id="jpg-quality-value">80%</span>
+                </div>
+                
+                <button class="btn" id="pdf-to-jpg-convert">Extract Images</button>
+                
+                <div class="result-container" id="pdf-to-jpg-result">
+                    <h3>Extraction Complete</h3>
+                    <div id="pdf-to-jpg-items"></div>
+                    <button class="btn" id="pdf-to-jpg-download-all">Download All</button>
+                </div>
+            </div>
+            
+            <!-- Compress File -->
+            <div class="tab-content" id="compress-file">
+                <h2>Compress File</h2>
+                <p>Reduce the size of your images and PDF files.</p>
+                
+                <div class="file-drop-area" id="compress-file-drop">
+                    <span class="icon icon-upload"></span>
+                    <h3>Drag & Drop File Here</h3>
+                    <p>or</p>
+                    <input type="file" id="compress-file-input" accept="image/*,.pdf" style="display: none;">
+                    <button class="btn" onclick="document.getElementById('compress-file-input').click()">Select File</button>
+                    <div class="file-info" id="compress-file-info"></div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="target-size">Target Size (KB)</label>
+                    <input type="number" id="target-size" min="1" placeholder="150">
+                </div>                
+                
+                <button class="btn" id="compress-file-btn">Compress</button>
+                
+                <div class="result-container" id="compress-file-result">
+                    <h3>Compression Complete</h3>
+                    <div class="result-item">
+                        <div class="result-info">
+                            <strong id="compress-file-result-name">file.jpg</strong>
+                            <span class="badge badge-success">Reduced by <span id="compress-reduction">50</span>%</span>
+                        </div>
+                        <div class="result-actions">
+                            <button class="btn" id="compress-file-download">Download</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Resize Image -->
+            <div class="tab-content" id="resize-image">
+                <h2>Resize Image</h2>
+                <p>Change the dimensions of your image.</p>
+                
+                <div class="file-drop-area" id="resize-image-drop">
+                    <span class="icon icon-upload"></span>
+                    <h3>Drag & Drop Image Here</h3>
+                    <p>or</p>
+                    <input type="file" id="resize-image-input" accept="image/*" style="display: none;">
+                    <button class="btn" onclick="document.getElementById('resize-image-input').click()">Select Image</button>
+                    <div class="file-info" id="resize-image-info"></div>
+                </div>
+                
+                <div id="resize-image-preview-container" class="hidden">
+                    <h3>Preview</h3>
+                    <canvas id="resize-image-preview"></canvas>
+                    
+                    <div class="image-editor-controls">
+                        <div class="control-group">
+                            <label for="resize-width">Width (px)</label>
+                            <input type="number" id="resize-width" min="1" max="5000">
+                        </div>
+                        <div class="control-group">
+                            <label for="resize-height">Height (px)</label>
+                            <input type="number" id="resize-height" min="1" max="5000">
+                        </div>
+                        <div class="control-group">
+                            <label for="resize-method">Resize Method</label>
+                            <select id="resize-method">
+                                <option value="exact">Exact Dimensions</option>
+                                <option value="constrain" selected>Maintain Aspect Ratio</option>
+                                <option value="percent">Percentage</option>
+                            </select>
+                        </div>
+                        <div class="control-group" id="resize-percent-container" style="display: none;">
+                            <label for="resize-percent">Percentage</label>
+                            <input type="number" id="resize-percent" min="1" max="200" value="50">
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="resize-image-btn">Resize</button>
+                </div>
+                
+                <div class="result-container" id="resize-image-result">
+                    <h3>Resize Complete</h3>
+                    <div class="result-item">
+                        <div class="result-info">
+                            <strong id="resize-image-result-name">resized_image.jpg</strong>
+                            <span class="badge badge-success">New Size: <span id="resize-new-dimensions">800×600</span></span>
+                        </div>
+                        <div class="result-actions">
+                            <button class="btn" id="resize-image-download">Download</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Passport Photo -->
+            <div class="tab-content" id="passport-photo">
+                <h2>Passport Photo Maker</h2>
+                <p>Create standard passport-sized photos with optional text.</p>
+                
+                <div class="file-drop-area" id="passport-photo-drop">
+                    <span class="icon icon-upload"></span>
+                    <h3>Drag & Drop Photo Here</h3>
+                    <p>or</p>
+                    <input type="file" id="passport-photo-input" accept="image/*" style="display: none;">
+                    <button class="btn" onclick="document.getElementById('passport-photo-input').click()">Select Photo</button>
+                    <div class="file-info" id="passport-photo-info"></div>
+                </div>
+                
+                <div id="passport-photo-editor" class="hidden">
+                    <h3>Edit Passport Photo</h3>
+                    <canvas id="passport-photo-canvas"></canvas>
+                    
+                    <div class="image-editor-controls">
+                        <!-- Photo Size -->
+                        <div class="control-group">
+                            <label for="passport-size">Photo Size</label>
+                            <select id="passport-size">
+                                <option value="35x45">3.5×4.5 cm (Standard)</option>
+                                <option value="2x2">2×2 inch (US)</option>
+                                <option value="33x48">3.3×4.8 cm (UK)</option>
+                                <option value="35x35">3.5×3.5 cm (India)</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+
+                        <!-- Custom Size Inputs (Hidden by Default) -->
+                        <div id="custom-size-inputs" class="hidden">
+                            <div class="control-group">
+                                <label for="custom-width">Width (px)</label>
+                                <input type="number" id="custom-width" placeholder="Width">
+                            </div>
+                            <div class="control-group">
+                                <label for="custom-height">Height (px)</label>
+                                <input type="number" id="custom-height" placeholder="Height">
+                            </div>
+                        </div>
+
+                        <!-- Background Color -->
+                        <div class="control-group">
+                            <label for="passport-bg-color">Background Color</label>
+                            <input type="color" id="passport-bg-color" class="color-picker" value="#ffffff">
+                        </div>
+
+                        <!-- Name -->
+                        <div class="control-group">
+                            <label for="passport-name">Name (Optional)</label>
+                            <input type="text" id="passport-name" placeholder="Enter name">
+                        </div>
+
+                        <!-- Date -->
+                        <div class="control-group">
+                            <label for="passport-date">Date (Optional)</label>
+                            <input type="date" id="passport-date">
+                        </div>
+
+                        <!-- Text Color -->
+                        <div class="control-group">
+                            <label for="passport-text-color">Text Color</label>
+                            <input type="color" id="passport-text-color" class="color-picker" value="#000000">
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="passport-photo-generate">Generate Passport Photo</button>
+                </div>
+                
+                <div class="result-container" id="passport-photo-result">
+                    <h3>Passport Photo Ready</h3>
+                    <div class="result-item">
+                        <div class="result-info">
+                            <strong id="passport-photo-result-name">passport_photo.jpg</strong>
+                            <span class="badge badge-success">Ready to Print</span>
+                        </div>
+                        <div class="result-actions">
+                            <button class="btn" id="passport-photo-download">Download</button>
+                        </div>
+                    </div>
+                </div>
+            </div>         
+
+        </div>
+    </div>
+    
+    <footer>
+        <p>enteakshaya DocTools - All processing happens in your browser. No data is sent to any server.</p>
+        <p>© 2025 enteakshaya DocTools. All rights reserved.</p>
+    </footer>
+
+    <!-- Load PDF.js library -->
+     <!-- Add this in the HTML for including the libraries directly if not using npm -->
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        // Tab switching functionality
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+                button.classList.add('active');
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        const docCache = {
+            store: async function(key, data) {
+                try {
+                    localStorage.setItem(key, JSON.stringify({
+                        timestamp: Date.now(),
+                        data: data
+                    }));
+                    return true;
+                } catch (error) {
+                    console.error('Cache storage error:', error);
+                    return false;
+                }
+            },
+
+            retrieve: function(key) {
+                try {
+                    const item = localStorage.getItem(key);
+                    if (!item) return null;
+
+                    const parsed = JSON.parse(item);
+
+                    // 🚨 Auto-clear cache after 5 hours
+                    if (Date.now() - parsed.timestamp > 5 * 60 * 60 * 1000) {
+                        localStorage.removeItem(key);
+                        return null;
+                    }
+
+                    return parsed.data;
+                } catch (error) {
+                    console.error('Cache retrieval error:', error);
+                    return null;
+                }
+            },
+
+            clear: function() {
+                try {
+                    // 🧹 Clear only cache created by this app
+                    Object.keys(localStorage).forEach(key => {
+                        if (key.startsWith('enteakshaya_doctools_')) {
+                            localStorage.removeItem(key);
+                        }
+
+                    });
+                    console.log('Cache cleared');
+                    return true;
+                } catch (error) {
+                    console.error('Cache clearing error:', error);
+                    return false;
+                }
+            }
+        };
+
+
+        // Allowed file types
+        const allowedFileTypes = [
+            'image/jpeg', 'image/png', 'application/pdf'
+        ];
+
+        // Handle multiple files
+        let uploadedFiles = [];
+
+        // Set up drop area
+        function setupDropArea(dropAreaId, inputId, callback) {
+            const dropArea = document.getElementById(dropAreaId);
+            const input = document.getElementById(inputId);
+
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            // Add visual feedback on drag events
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                dropArea.classList.add('highlight');
+            }
+
+            function unhighlight() {
+                dropArea.classList.remove('highlight');
+            }
+
+            // Handle drop event
+            dropArea.addEventListener('drop', handleDrop, false);
+            input.addEventListener('change', handleFiles, false);
+
+            function handleDrop(e) {
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFiles({ target: { files } });
+                }
+            }
+
+            function handleFiles(e) {
+                const files = e.target.files;
+                const validFiles = Array.from(files).filter(file => allowedFileTypes.includes(file.type));
+
+                if (validFiles.length > 0) {
+                    uploadedFiles = [...uploadedFiles, ...validFiles];
+                    displayFileList(uploadedFiles);
+                } else {
+                    alert('Invalid file type! Please upload JPG, PNG, or PDF files.');
+                }
+            }
+        }
+
+        // Display uploaded files in the result container
+        function displayFileList(files) {
+            resultList.innerHTML = ''; // Clear existing list
+
+            files.forEach((file, index) => {
+                const listItem = document.createElement('div');
+                listItem.classList.add('result-item');
+                listItem.innerHTML = `
+                    <strong>${file.name}</strong>
+                    <span class="file-size">${formatFileSize(file.size)}</span>
+                    <button class="btn btn-remove" data-index="${index}">Remove</button>
+                `;
+                resultList.appendChild(listItem);
+            });
+
+            resultContainer.style.display = files.length > 0 ? 'block' : 'none';
+
+            // Add remove event
+            document.querySelectorAll('.btn-remove').forEach(btn => {
+                btn.addEventListener('click', removeFile);
+            });
+        }
+
+        // Remove file from list
+        function removeFile(e) {
+            const index = parseInt(e.target.getAttribute('data-index'));
+            uploadedFiles.splice(index, 1);
+            displayFileList(uploadedFiles);
+        }
+
+        
+
+        // Utility functions
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
+        }
+
+        // Initialize drop area
+        setupDropArea('jpg-to-pdf-drop', 'jpg-to-pdf-input', (files) => {
+            uploadedFiles = [...uploadedFiles, ...files];
+            displayFileList(uploadedFiles);
+        });
+    });
+
+
+
+    </script>
+    <script src="js/script.js"></script>
+</body>
+</html>
